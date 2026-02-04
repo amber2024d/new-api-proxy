@@ -1,0 +1,12 @@
+{
+  "name": "api-proxy",
+  "version": "1.0.0",
+  "description": "Simple reverse proxy server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
