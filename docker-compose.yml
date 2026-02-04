@@ -1,0 +1,9 @@
+services:
+  proxy:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - TARGET_DOMAIN=${TARGET_DOMAIN:-https://example.com}
+      - PORT=${PORT:-3000}
+    restart: unless-stopped
