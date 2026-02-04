@@ -9,7 +9,22 @@ const targetUrl = new URL(TARGET_DOMAIN);
 const isHttps = targetUrl.protocol === 'https:';
 const httpModule = isHttps ? https : http;
 
+// CORS headers
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+  'Access-Control-Max-Age': '86400',
+};
+
 const server = http.createServer((req, res) => {
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, corsHeaders);
+    res.end();
+    return;
+  }
+
   const options = {
     hostname: targetUrl.hostname,
     port: targetUrl.port || (isHttps ? 443 : 80),
@@ -22,7 +37,9 @@ const server = http.createServer((req, res) => {
   };
 
   const proxyReq = httpModule.request(options, (proxyRes) => {
-    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    // Merge CORS headers with response headers
+    const headers = { ...proxyRes.headers, ...corsHeaders };
+    res.writeHead(proxyRes.statusCode, headers);
     proxyRes.pipe(res);
   });
 
